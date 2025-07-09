@@ -1,0 +1,21 @@
+{
+  "object_spaces": {
+    "aacdd187-29c3-42eb-8b92-1734cd29d641": {
+      "descriptor": {
+        "markers": [{
+          "position": [0.0, 0.0, 0.0],
+          "orientation": [0.0, 0.0, 0.0],
+          "scale": 0.10,
+          "id": 0,
+          "variances": [ 0.000001, 0.000001, 0.0001 ]
+        }]
+      },
+      "detector": {
+        "dot_markers": {
+          "marker_dictionary": "Aruco7x7_50",
+          "marker_ids": [ 0 ]
+        }
+      }
+    }
+  }
+}

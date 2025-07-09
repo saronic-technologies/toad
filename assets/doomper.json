@@ -1,0 +1,71 @@
+{
+  "pipelines": [
+    {
+      "group": {
+        "BaslerGroup": {
+          "cameras": [
+            {
+              "address": "192.168.42.9",
+              "id": 9,
+              "loopback": "/dev/video20",
+              "name": "port-forward-eo",
+              "settings": {
+                "target_brightness": 0.15,
+                "exposure_limit": 20000.0
+              }
+            },
+            {
+              "address": "192.168.42.10",
+              "id": 10,
+              "loopback": "/dev/video21",
+              "name": "stbd-forward-eo",
+              "settings": {
+                "target_brightness": 0.15,
+                "exposure_limit": 20000.0
+              }
+            }
+          ],
+          "name": "forward-eo"
+        }
+      }
+    },
+    {
+      "group": {
+        "VientoGroup": {
+          "cameras": [
+            {
+              "address": "192.168.42.11",
+              "id": 11,
+              "loopback": "/dev/video6",
+              "name": "port-forward-straw-ir",
+              "pv_config": "/nix/store/w3z7a3nkn38qf3ixqc8nr4pvqg3p4xzk-viento-8bit-free-run-low-fps.pvcfg"
+            },
+            {
+              "address": "192.168.42.12",
+              "id": 12,
+              "loopback": "/dev/video7",
+              "name": "stbd-forward-straw-ir",
+              "pv_config": "/nix/store/w3z7a3nkn38qf3ixqc8nr4pvqg3p4xzk-viento-8bit-free-run-low-fps.pvcfg"
+            }
+	  ],
+          "name": "forward-ir",
+	  "check_time_alignment": false,
+	  "framerate": 15.0
+        }
+      }
+    }
+  ],
+  "recording": {
+    "ids": [
+      9,
+      10,
+      11,
+      12
+    ],
+    "bitrate": 100000000,
+    "encoder_type": "h264_nvenc",
+    "gop": 8,
+    "all": true,
+    "path": "/home/saronic/calibration.mcap"
+  }
+}
