@@ -6,9 +6,6 @@ from boats import AVAILABLE_BOATS
 from doomper_gui import PauseUnpauseGUI
 import tkinter as tk
 
-# Skipped steps:
-# - Building the .#camera-position and .#metrical packages
-
 def doomper_thread(boat:str):
     result = send_crystal_command(boat=boat, command="cd ~/data && sudo -E doomper --config doomper.json")
 
@@ -27,6 +24,9 @@ def main():
     crystal_version = send_crystal_command(boat=boat, command="grep '^IMAGE_VERSION=' /etc/os-release | cut -d'=' -f2")
     print(f"Commit Hash for {crystal}: {crystal_version}")
 
+    # Skipped steps:
+    # - Building the .#camera-position and .#metrical packages
+    
     print("please make sure that the .#camera-position and .#metrical packages are built and copied to the crystal before proceeding.")
 
     input("Press Enter to continue with the calibration process...")
@@ -107,10 +107,14 @@ def main():
     print(f"Doomper thread starting, waiting for 15 seconds to ensure it is running...")
     time.sleep(15)
 
-    gui = PauseUnpauseGUI()
+    gui = PauseUnpauseGUI(boat=boat)
     gui.run()
 
+    doomper_thread_instance.join()
+
+    # steps left: 
+    # post processing the calibration.mcap file
+    # deploying the json data to the /etc/calibration folder
+
 if __name__ == "__main__":
-    # main()
-   gui = PauseUnpauseGUI()
-   gui.run()
+    main()

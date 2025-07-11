@@ -4,7 +4,8 @@ import tkinter.messagebox as messagebox
 from utils import send_crystal_command, send_local_command
 
 class PauseUnpauseGUI:
-    def __init__(self):
+    def __init__(self, boat: str):
+        self.boat = boat
         self.root = tk.Tk()
         self.root.title("Pause/Unpause GUI")
 
@@ -51,6 +52,8 @@ class PauseUnpauseGUI:
     def stop_doompctl(self):
         response = messagebox.askyesno("Confirm Stop", "Once doomper is stopped this GUI will close. Are you sure?")
         if response:
+            result = send_crystal_command(boat=self.boat, command="doompctl stop")
+            # TODO: there should be error handling here for if there is a stderr
             self.status_label.config(text="Status: Stopped")
             self.pause_button.config(state=tk.DISABLED)
             self.unpause_button.config(state=tk.DISABLED)
@@ -59,6 +62,8 @@ class PauseUnpauseGUI:
 
     def pause(self):
         if self.is_unpaused:
+            result = send_crystal_command(boat=self.boat, command="doompctl pause")
+            # TODO: there should be a error handling here for if there is a stderr
             self.is_unpaused = False
             self.pause_button.config(state=tk.DISABLED)
             self.unpause_button.config(state=tk.NORMAL)
@@ -71,6 +76,8 @@ class PauseUnpauseGUI:
 
     def unpause(self):
         if not self.is_unpaused:
+            result = send_crystal_command(boat=self.boat, command="doompctl unpause")
+            # TODO: there should be a error handling here for if there is a stderr
             self.is_unpaused = True
             self.unpause_start_time = time.time()
             self.pause_button.config(state=tk.NORMAL)
@@ -82,7 +89,7 @@ class PauseUnpauseGUI:
 
     def get_calibration_filesize(self):
         try:
-            mcap_filesize = None # this should be a command to retrieve the filesize of the mcap
+            mcap_filesize = send_crystal_command(boat=self.boat, command="stat -c%s /home/saronic/data/calibration.mcap")
             return mcap_filesize
         except FileNotFoundError:
             return "File not found"
