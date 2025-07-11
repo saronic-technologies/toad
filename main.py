@@ -1,12 +1,18 @@
 import os
+import threading
+import time
 from utils import *
 from boats import AVAILABLE_BOATS
+from doomper_gui import PauseUnpauseGUI
+import tkinter as tk
 
 # Skipped steps:
 # - Building the .#camera-position and .#metrical packages
 
+def doomper_thread(boat:str):
+    result = send_crystal_command(boat=boat, command="cd ~/data && sudo -E doomper --config doomper.json")
+
 def main():
-    user = "saronic"
     valid_boat = False
     while not valid_boat:
         boat = input("Which Boat are you trying to calibrate? (Enter the name of the boat): ")
@@ -61,7 +67,50 @@ def main():
             print("Invalid input. Please enter 'yes' or 'no'.")
             continue
     
-    
+    # open_foxglove_result = send_local_command(command='open -a "Foxglove Studio"')
+    print("Please check the output for torchyd2 to ensure it is running correctly...")
+    result = send_crystal_command(boat=boat, command="jfu torchyd2")
+    torchy_check = False
+    while not torchy_check:
+        torchy_valid = input("Does the output look correct? ('yes' or 'no'): ")
+        if torchy_valid == 'yes':
+            print("jfu torchyd2 output is valid.")
+            torchy_check = True
+        elif torchy_valid == 'no':
+            print("jfu torchyd2 output is not valid. Please check the camera connections and try again.")
+            continue
+        else:
+            print("Invalid input. Please enter 'yes' or 'no'.")
+            continue
+
+    result = send_crystal_command(boat=boat, command="sudo systemctl stop torchyd2")
+
+    print("Torchyd2 service stopped. Please check the output for any errors...")
+
+    result = send_crystal_command(boat=boat, command="sup torchyd2")
+    torchy_check = False
+    while not torchy_check:
+        torchy_valid = input("Is torchyd2 stopped? ('yes' or 'no'): ")
+        if torchy_valid == 'yes':
+            print("jfu torchyd2 output is valid.")
+            torchy_check = True
+        elif torchy_valid == 'no':
+            print("jfu torchyd2 output is not valid. Please check the camera connections and try again.")
+            continue
+        else:
+            print("Invalid input. Please enter 'yes' or 'no'.")
+            continue
+
+    input(f"Press Enter to start doomper on {crystal}...")
+    doomper_thread_instance = threading.Thread(target=doomper_thread, args=(boat,))
+    doomper_thread_instance.start()
+    print(f"Doomper thread starting, waiting for 15 seconds to ensure it is running...")
+    time.sleep(15)
+
+    gui = PauseUnpauseGUI()
+    gui.run()
 
 if __name__ == "__main__":
-    main()
+    # main()
+   gui = PauseUnpauseGUI()
+   gui.run()
